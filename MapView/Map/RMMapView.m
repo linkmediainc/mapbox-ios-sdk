@@ -2190,8 +2190,11 @@
 	normalizedProjectedPoint.x = annotation.projectedLocation.x + fabs(planetBounds.origin.x);
 	normalizedProjectedPoint.y = annotation.projectedLocation.y + fabs(planetBounds.origin.y);
 
-    CGPoint newPosition = CGPointMake((normalizedProjectedPoint.x / _metersPerPixel) - _mapScrollView.contentOffset.x,
-                                      _mapScrollView.contentSize.height - (normalizedProjectedPoint.y / _metersPerPixel) - _mapScrollView.contentOffset.y);
+    CGPoint newPosition = CGPointMake(floor((normalizedProjectedPoint.x / _metersPerPixel) - 
+                                            _mapScrollView.contentOffset.x),
+                                      floor(_mapScrollView.contentSize.height - 
+                                            (normalizedProjectedPoint.y / _metersPerPixel) - 
+                                            _mapScrollView.contentOffset.y));
 
 //    RMLog(@"Change annotation at {%f,%f} in mapView {%f,%f}", annotation.position.x, annotation.position.y, mapScrollView.contentSize.width, mapScrollView.contentSize.height);
 
