@@ -43,6 +43,9 @@
     UIBezierPath *bezierPath;
 
     RMMapView *mapView;
+    
+    // hack by linkmediainc
+    BOOL completedFirstDraw;
 }
 
 @synthesize scaleLineWidth;
@@ -52,6 +55,9 @@
 @synthesize shadowOffset;
 @synthesize enableShadow;
 @synthesize pathBoundingBox;
+@synthesize positionOffsetX;
+@synthesize positionOffsetY;
+@synthesize disableScaling;
 
 #define kDefaultLineWidth 2.0
 
@@ -88,6 +94,11 @@
     scaleLineWidth = NO;
     scaleLineDash = NO;
     isFirstPoint = YES;
+    
+    self.positionOffsetX = 0;
+    self.positionOffsetY = 0;
+    self.disableScaling = NO;
+    completedFirstDraw = NO;
 
     [(id)self setValue:[[UIScreen mainScreen] valueForKey:@"scale"] forKey:@"contentsScale"];
 
@@ -149,7 +160,7 @@
     // we are about to overwrite nonClippedBounds, therefore we save the old value
     CGRect previousNonClippedBounds = nonClippedBounds;
 
-    if (scale != lastScale)
+    if (scale != lastScale && !(completedFirstDraw && self.disableScaling))
     {
         lastScale = scale;
 
@@ -175,6 +186,8 @@
         nonClippedBounds = CGRectInset(boundsInMercators, -scaledLineWidth - (2 * shapeLayer.shadowRadius), -scaledLineWidth - (2 * shapeLayer.shadowRadius));
 
         [scaledPath release];
+        
+        completedFirstDraw = YES;
     }
 
     // if the path is not scaled, nonClippedBounds stay the same as in the previous invokation
@@ -190,7 +203,8 @@
     float offset;
     const float outset = 150.0f; // provides a buffer off screen edges for when path is scaled or moved
 
-    CGPoint newPosition = self.annotation.position;
+    CGPoint newPosition = CGPointMake(self.annotation.position.x + self.positionOffsetX,
+          self.annotation.position.y + self.positionOffsetY);
 
 //    RMLog(@"x:%f y:%f screen bounds: %f %f %f %f", newPosition.x, newPosition.y,  screenBounds.origin.x, screenBounds.origin.y, screenBounds.size.width, screenBounds.size.height);
 

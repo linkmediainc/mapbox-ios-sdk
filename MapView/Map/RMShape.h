@@ -66,6 +66,11 @@
 
 @property (nonatomic, readonly) CGRect pathBoundingBox;
 
+// hacks by linkmediainc
+@property (nonatomic, assign) CGFloat positionOffsetX;
+@property (nonatomic, assign) CGFloat positionOffsetY;
+@property (nonatomic, assign) BOOL disableScaling;
+
 - (void)moveToProjectedPoint:(RMProjectedPoint)projectedPoint;
 - (void)moveToScreenPoint:(CGPoint)point;
 - (void)moveToCoordinate:(CLLocationCoordinate2D)coordinate;
