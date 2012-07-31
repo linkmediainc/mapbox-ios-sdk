@@ -1287,6 +1287,19 @@
 
 #pragma mark - Gesture Recognizers and event handling
 
+- (RMMapLayer*)findAnnotationLayerInSuperlayers:(CALayer *)layer
+{
+    CALayer *superlayer = layer;
+    while (superlayer) {
+        if ([superlayer isKindOfClass:[RMMapLayer class]]) 
+        {
+            return (RMMapLayer*)superlayer;
+        }
+        superlayer = [superlayer superlayer];
+    }
+    return nil;
+}
+
 - (RMAnnotation *)findAnnotationInLayer:(CALayer *)layer
 {
     if ([layer respondsToSelector:@selector(annotation)])
@@ -1319,6 +1332,7 @@
     }
 
     CALayer *superlayer = [hit superlayer];
+    RMMapLayer *annotationLayer;
 
     // See if tap was on a marker or marker label and send delegate protocol method
     if ([hit isKindOfClass:[RMMarker class]])
@@ -1332,6 +1346,10 @@
     else if ([superlayer superlayer] != nil && [[superlayer superlayer] isKindOfClass:[RMMarker class]])
     {
         [self tapOnLabelForAnnotation:[((RMMarker *)[superlayer superlayer]) annotation] atPoint:[recognizer locationInView:self]];
+    }
+    else if ((annotationLayer = [self findAnnotationLayerInSuperlayers:hit]))
+    {
+        [self tapOnAnnotation:[annotationLayer annotation] atPoint:[recognizer locationInView:self]];
     }
     else
     {
