@@ -2274,6 +2274,8 @@
                 annotation.layer = [_delegate mapView:self layerForAnnotation:annotation];
             if (annotation.layer == nil)
                 continue;
+            // hack by darin (see "hack by darin" comment below)
+            annotation.layer.hidden = NO;
 
             // Use the zPosition property to order the layer hierarchy
             if ( ! [_visibleAnnotations containsObject:annotation])
@@ -2294,7 +2296,15 @@
                 if (_delegateHasWillHideLayerForAnnotation)
                     [_delegate mapView:self willHideLayerForAnnotation:annotation];
 
-                annotation.layer = nil;
+                // hack by darin: original line of code commented out and replaced with "hidden" assignment
+                //
+                // for reasons not clear to me, when the annotation layer is set to nil, it never reappears,
+                // even though the code above looks like it ought to regenerate the layer and add it to the 
+                // subview. Simply hiding it, rather than nuking it altogether, seems to fix the problem,
+                // though it would be nice to understand what the problem actually is - this is really just
+                // a band-aid
+//                annotation.layer = nil;
+                annotation.layer.hidden = YES;
 
                 if (_delegateHasDidHideLayerForAnnotation)
                     [_delegate mapView:self didHideLayerForAnnotation:annotation];
