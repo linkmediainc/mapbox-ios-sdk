@@ -73,7 +73,7 @@
 - (id)initWithReferenceURL:(NSURL *)referenceURL enablingDataOnMapView:(RMMapView *)mapView;
 
 // Initialize source with properly list (deprecated; use TileJSON).
-- (id)initWithInfo:(NSDictionary *)info __attribute__ ((deprecated));
+- (id)initWithInfo:(NSDictionary *)info;// __attribute__ ((deprecated)); commented out by darin - we don't need to know this
 
 // HTML-formatted legend for this source, if any
 - (NSString *)legend;
