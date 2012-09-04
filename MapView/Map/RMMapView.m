@@ -2409,7 +2409,16 @@
     {
         [self correctScreenPosition:annotation animated:NO];
 
-        if (annotation.layer == nil && [annotation isAnnotationOnScreen] && _delegateHasLayerForAnnotation)
+        // another painful hack by darin
+        // the "|| YES" clause in the conditional below is to work around an issue wherein annotations
+        // associated with offscreen locations do not appear even when the location is brought onscreen
+        // (via scrolling or zooming). The code in in the "if (annotation.layer)" block below appears
+        // verbatim in response to an annotation being brought back on screen, but it doesn't work
+        // in that context for an unknown reason - I can't tell if it's a bug in our system or
+        // in MapBox's, but it's very odd that the same lines of code work in one situation but not
+        // in another. I'm sacrificing some efficiency here with this hack, but it's the lesser of
+        // two evils as we're inching closer to our App Store submission deadline
+        if (annotation.layer == nil && ([annotation isAnnotationOnScreen] || YES) && _delegateHasLayerForAnnotation)
             annotation.layer = [_delegate mapView:self layerForAnnotation:annotation];
 
         if (annotation.layer)
